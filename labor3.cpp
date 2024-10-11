@@ -51,22 +51,23 @@ void push(void)
 		head = p;
 		last = p;
 	}
-	else if (head != NULL && p != NULL) // список уже есть, то вставляем в начало
+	else if (last != NULL && p != NULL) // список уже есть, то вставляем в начало
 	{
-		p->next = head;
-		head = p;
+		last->next = p;
+		last = p;
 	}
 	return;
 }
 
 char *pop(){
-	if(head == NULL) return NULL;
+	if(last == NULL) return NULL;
 	struct node *temp = head, *prev=NULL;
 	char str[256];
 
 	if(temp->next == NULL){
-			strcpy(str, head->inf);
-			free(head);
+			strcpy(str, last->inf);
+			free(last);
+			last = NULL;
 			head = NULL;
 			return str;
 		}
@@ -77,6 +78,7 @@ char *pop(){
 			strcpy(str, temp->inf);
 			free(temp);
 			prev->next = NULL;
+			last = prev;
 			return str;
 		}
 		prev = temp;
@@ -91,7 +93,7 @@ void review(void)
 	struct node *struc = head;
 	if (head == NULL)
 	{
-		printf("Список пуст\n");
+		printf("Стек пуст\n");
 	}
 	while (struc)
 	{
@@ -182,40 +184,32 @@ int main()
 	
 	setlocale(LC_ALL, "Rus");
 	char str1[256];
-	while(flag!=5){
+	while(true){
 		system("cls");
-		printf("1. Добавить элемент\n2. Удалить элемент с выводом элемента\n3. Найти элемент\n4. Отобразить очередь\n5. Выйти из программы\nВвод: ");
+		printf("1. Добавить элемент\n2. Удалить элемент с выводом элемента\n3. Отобразить стек\n4. Выйти из программы\nВвод: ");
 		scanf("%d", &flag);
-		if(flag == 1){
-			system("cls");
-			push();
-		}
-		else if(flag == 2){
-			system("cls");
-			strcpy(str1, pop());
-			printf("%s\n", str1);
-			printf("\nДля возврата к меню введите любой символ:");
-			getchar();
-			getchar();
-		}
-		else if(flag == 3){
-			system("cls");
-			printf("Введите название нужного элемента:");
-			scanf("%s", str);
-			find(str);
-			printf("\nДля возврата к меню введите любой символ:");
-			getchar();
-			getchar();
-		}
-		else if(flag == 4){
-			system("cls");
-			review();
-			printf("\nДля возврата к меню введите любой символ:");
-			getchar();
-			getchar();
+		switch(flag){
+		case 1:
+				system("cls");
+				push();
+		break;
+		case 2:
+				system("cls");
+				strcpy(str1, pop());
+				printf("%s\n", str1);
+				printf("\nДля возврата к меню введите любой символ:");
+				getchar();
+				getchar();
+		break;
+		case 3:
+				system("cls");
+				review();
+				printf("\nДля возврата к меню введите любой символ:");
+				getchar();
+				getchar();
+		break;
+		case 4:
+			return 0;
 		}
 	}
-
-	getchar();
-	return 0;
 }
