@@ -10,13 +10,12 @@
 struct node
 {
 	char inf[256]; // полезная информация
-	int pr;
 	struct node *next; // ссылка на следующий элемент
 };
 
 struct node *head = NULL, *last = NULL, *f = NULL;
 int dlinna = 0, flag = -1;
-void spstore(void), review(void), del(char *name);
+void push(void), review(void), del(char *name);
 char find_el[256], str[256];
 struct node *find(char *name);
 struct node *get_struct(void);
@@ -39,37 +38,51 @@ struct node *get_struct(void)
 		return NULL;
 	}
 	strcpy(p->inf, s);
-	printf("Введите приоритет: \n ");
-	scanf("%i", &(p->pr));
 	p->next = NULL;
 	return p;
 }
 
-void spstore(void)
+void push(void)
 {
-	struct node *p = NULL, *temp = head;
+	struct node *p = NULL;
 	p = get_struct();
 	if (head == NULL && p != NULL) // если списка нет, то устанавливаем голову
 	{
 		head = p;
+		last = p;
 	}
-	else if (head != NULL && p != NULL) // список уже есть, то вставляем в конец
+	else if (head != NULL && p != NULL) // список уже есть, то вставляем в начало
 	{
-		if(p->pr > temp->pr){
-			p->next = temp;
-			head = p;
-			return;
-		}
-		while(true){
-			if(temp->next==NULL || p->pr > temp->next->pr){
-				p->next = temp->next;
-				temp->next = p;
-				return;
-			}
-			temp = temp->next;
-		}
+		p->next = head;
+		head = p;
 	}
 	return;
+}
+
+char *pop(){
+	if(head == NULL) return NULL;
+	struct node *temp = head, *prev=NULL;
+	char str[256];
+
+	if(temp->next == NULL){
+			strcpy(str, head->inf);
+			free(head);
+			head = NULL;
+			return str;
+		}
+	prev = temp;
+	temp = temp->next;
+	while(true){
+		if(temp->next == NULL){
+			strcpy(str, temp->inf);
+			free(temp);
+			prev->next = NULL;
+			return str;
+		}
+		prev = temp;
+		temp = temp->next;
+	}
+
 }
 
 /* Просмотр содержимого списка. */
@@ -82,7 +95,7 @@ void review(void)
 	}
 	while (struc)
 	{
-		printf("%s, %d; ", struc->inf, struc->pr);
+		printf("%s; ", struc->inf);
 		struc = struc->next;
 	}
 	return;
@@ -99,7 +112,7 @@ struct node *find(char *name)
 	{
 		if (strcmp(name, struc->inf) == 0)
 		{
-			printf("%s, %d ", struc->inf, struc->pr);
+			printf("%s", struc->inf);
 			return struc;
 		}
 		struc = struc->next;
@@ -168,19 +181,22 @@ int main()
 {
 	
 	setlocale(LC_ALL, "Rus");
+	char str1[256];
 	while(flag!=5){
 		system("cls");
-		printf("1. Добавить элемент\n2. Удалить элемент\n3. Найти элемент\n4. Отобразить список\n5. Выйти из программы\nВвод: ");
+		printf("1. Добавить элемент\n2. Удалить элемент с выводом элемента\n3. Найти элемент\n4. Отобразить очередь\n5. Выйти из программы\nВвод: ");
 		scanf("%d", &flag);
 		if(flag == 1){
 			system("cls");
-			spstore();
+			push();
 		}
 		else if(flag == 2){
 			system("cls");
-			printf("Введите название нужного элемента:");
-			scanf("%s", str);
-			del(str);
+			strcpy(str1, pop());
+			printf("%s\n", str1);
+			printf("\nДля возврата к меню введите любой символ:");
+			getchar();
+			getchar();
 		}
 		else if(flag == 3){
 			system("cls");
